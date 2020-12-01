@@ -1,0 +1,74 @@
+
+package Model;
+
+public class porder 
+{   
+    private String name;
+    private Integer id,lcd,mouse,ram,sum;
+    
+    public porder() //null
+    {
+    }
+
+    public porder(String name, Integer lcd, Integer ram,Integer mouse) {
+        this.name = name;
+        this.lcd = lcd;
+        this.mouse = mouse;
+        this.ram = ram;
+        sum=lcd*4000+mouse*1000+ram*200;
+    }
+
+    
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getLcd() {
+        return lcd;
+    }
+
+    public void setLcd(Integer lcd) {
+        this.lcd = lcd;
+    }
+
+    public Integer getMouse() {
+        return mouse;
+    }
+
+    public void setMouse(Integer mouse) {
+        this.mouse = mouse;
+    }
+
+    public Integer getRam() {
+        return ram;
+    }
+
+    public void setRam(Integer ram) {
+        this.ram = ram;
+    }
+
+    public Integer getSum() {
+        sum=lcd*4000+mouse*1000+ram*200;
+        return sum;
+    }
+
+    public void setSum(Integer sum) {
+        
+        this.sum = sum;
+    }
+    
+    
+}

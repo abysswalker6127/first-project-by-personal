@@ -1,0 +1,54 @@
+ok1MouseClicked(java.awt.event.MouseEvent evt) {                                 
+        String name=Name.getText();
+        Integer lcd=Integer.parseInt(Lcd.getText());
+        Integer ram=Integer.parseInt(Ram.getText());
+        Integer mouse=Integer.parseInt(Mouse.getText());
+        porder  p=new porder(name,lcd,ram,mouse);
+        new porderDao().add(p);
+        output1.setText("總金額="+p.getSum()+"\n新增成功");
+    } 
+
+
+ok2MouseClicked(java.awt.event.MouseEvent evt) {                                 
+    output2.setText(new porderDao().queryAll());
+    }
+
+ok3MouseClicked(java.awt.event.MouseEvent evt) {                                 
+           /*String name=Name.getText();
+        Integer lcd=Integer.parseInt(Lcd.getText());
+        Integer ram=Integer.parseInt(Ram.getText());
+        Integer mouse=Integer.parseInt(Mouse.getText());*/
+        Integer id=Integer.parseInt(Id.getText());
+        
+        porder p=new porder();
+        //比較輸入欄位是否為空白(不是null Null的判斷在new porderDao().update3()做處理)
+        if(Name1.getText().equals("")!=true) p.setName(Name1.getText());
+        if(Lcd1.getText().equals("")!=true) p.setLcd(Integer.parseInt(Lcd1.getText()));
+        if(Ram1.getText().equals("")!=true) p.setRam(Integer.parseInt(Ram1.getText()));
+        if(Mouse1.getText().equals("")!=true) p.setMouse(Integer.parseInt(Mouse1.getText()));
+        
+        new porderDao().update3(id,p);
+        output1.setText("修改成功!");
+        
+        
+    }
+
+ok4MouseClicked(java.awt.event.MouseEvent evt) {                                 
+      Integer id=Integer.parseInt(id2.getText());
+      
+      new porderDao().deleteData(id);
+      output1.setText("刪除成功!");
+
+
+
+outputMouseClicked(java.awt.event.MouseEvent evt) {                                    
+                        String filePath=filepath.getText();
+                        String tableName=tablename.getText();
+                        String sql="select*from "+SQL.getText();
+        
+                        porderDao p1=new porderDao();
+                        p1.outputExcel(filePath, tableName,sql);
+                        
+    }
+
+

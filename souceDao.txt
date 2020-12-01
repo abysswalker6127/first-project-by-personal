@@ -1,0 +1,297 @@
+
+package Dao;
+
+import Controller.loginUi;
+import Controller.porderUI;
+import Model.porder;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+/**
+ *
+ * @author Administrator
+ */
+public class porderDao implements ImpDao
+{
+     
+    
+    public static void main(String[] args) 
+    {
+       
+           
+    }
+    @Override
+    public void add(Object p) 
+    {
+        String sql="insert into porder(name,lcd,ram,mouse,sum) values(?,?,?,?,?)";//SQL語法
+        porder p2=(porder)p;//需要轉型 將從外部得到的Object轉換成porder p2 才能使用porder方法
+        Connection  conn=ImpDao.getDB();//繼承自ImpDao所以可以直接使用ImpDao.getDB() (getDB()為static修飾) 
+        try 
+        {
+            PreparedStatement ps=conn.prepareStatement(sql);//PreparedStatement主要為java端命令(方法)的包裝
+            //Connection conn主要提供給JDBC相關的介面以及溝通功能與SQL資料庫建立連接
+            ps.setString(1,p2.getName());
+            ps.setInt(2,p2.getLcd());
+            ps.setInt(3,p2.getRam());
+            ps.setInt(4,p2.getMouse());
+            ps.setInt(5,p2.getSum());
+            
+            ps.executeUpdate();//資料處理完畢後 需用excuteUpdate將數值以及方法傳回給SQL資料庫處理
+        } 
+        catch (SQLException ex) 
+        {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+          
+        }
+
+    @Override
+    public String queryAll()//查詢所有欄位的資料數值 並用ResultSet呈現
+            //*PreparedStatement 只做為SQL指令的輸入為主與資料傳送 真正接收的是Result物件
+    {
+                Connection conn=ImpDao.getDB();
+                String sql="select*from porder";
+                String msg="";
+                PreparedStatement ps;//建立物件以儲存數據 input output都是
+        try 
+        {
+            ps = conn.prepareStatement(sql);
+            ResultSet rs=ps.executeQuery();
+             
+            while(rs.next())
+            {
+                msg=msg+"id:"+rs.getInt("id")+
+                        "\t姓名:"+rs.getString("name")+
+                        "\tLcd:"+rs.getInt("lcd")+
+                        "\tRam:"+rs.getInt("ram")+
+                        "\tMouse:"+rs.getInt("mouse")+
+                        "\tSum:"+rs.getInt("sum")+"\n";
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+               return msg; 
+                
+                
+         }
+
+    @Override
+    public void update1(Integer id,String name) //傳統寫法 一次只能處理一個欄位 工作量大
+    {
+                Connection conn=ImpDao.getDB();
+                String sql="update porder set name=? where id=?";
+                PreparedStatement ps;
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, name);
+            ps.setInt(2,id);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }                 
+    }
+    
+    @Override
+    public void update2(Integer id,Integer lcd) {
+        String Sql="update porder set lcd=? where id=?";
+         Connection conn=ImpDao.getDB();
+           try {
+            PreparedStatement ps=conn.prepareStatement(Sql);            
+            ps.setInt(1,lcd);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }
+
+    @Override
+    public void deleteData(Integer id)        
+    {       
+            String sql="delete from porder  where id=?";
+            Connection conn=ImpDao.getDB();
+   try {
+            PreparedStatement ps=conn.prepareStatement(sql);
+            ps.setInt(1,id);
+            ps.executeUpdate();
+        } 
+   catch (SQLException ex)
+   {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+        
+    }
+
+    @Override
+    public void update3(Integer id, Object o) //此方法有缺點 以新物件替換進去 會導致全部欄位數值變動 無法處理單一欄位的修改
+    {
+                Connection conn=ImpDao.getDB();
+                String sql="update porder set name=?,lcd=?,ram=?,mouse=?,sum=? where id=?";
+                porder p=(porder) o;//強制轉型 讓Object轉成porder
+                porder p2=(porder)new porderDao().queryId(id);//執行queryId 先行讀取指定id資料
+               
+             /*  if(p.getName()!=(""))  p2.setName(p.getName());
+                if(p.getLcd().toString()!=("")) p2.setLcd(p.getLcd());
+                     //將各項資料與UI來源輸入做比較
+                    //若UI輸入資料不為null 則將新的資料(p)寫入舊的資料(p2)
+                if(p.getMouse().toString()!=("")) p2.setMouse(p.getMouse());
+                if(!(p.getRam().toString()!=("")))  p2.setRam(p.getRam());*/
+                
+                
+                
+                
+                
+              if(p.getName()!=null)  p2.setName(p.getName());
+                if(p.getLcd()!=null) p2.setLcd(p.getLcd());
+                     //將各項資料與UI來源輸入做比較
+                    //若UI輸入資料不為null 則將新的資料(p)寫入舊的資料(p2)
+                if(p.getMouse()!=null)  p2.setMouse(p.getMouse());
+                if(p.getRam()!=null)  p2.setRam(p.getRam());
+                
+                //if(p.getSum()!=null)p2.setSum(p.getSum());
+            try {
+    
+            PreparedStatement ps=conn.prepareStatement(sql);//在執行將p2資料寫進SQL語法中 並上傳到SQL資料庫
+            ps.setString(1,p2.getName());
+            ps.setInt(2,p2.getLcd());
+            ps.setInt(3,p2.getRam());
+            ps.setInt(4,p2.getMouse());
+            ps.setInt(5,p2.getSum());
+            ps.setInt(6,id);//id是從SQL資料庫抓取 不是從porder class抓取
+            ps.executeUpdate();//將資料寫進SQL資料庫
+        } catch (SQLException ex) {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    public void login(String schema,String account,String passwordLogin){
+      
+        Connection conn=ImpDao.getDB();
+    }
+
+    @Override
+    public Object queryId(Integer id)//修改可視為讀取->得到UI輸入的值->寫入資料庫
+    {
+//利用物件將指定id的資料數值複製拉出 待修改後完成需要的數值內容後
+//再將物件複寫回資料庫系統中
+            Connection conn=ImpDao.getDB();
+        String sql="select*from porder where id=?";
+            porder p=null;//先設定null 如果中途數值出錯 會進入exception階段 中斷java執行 方便除錯
+        try {
+            PreparedStatement ps;
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1,id);
+            ResultSet rs=ps.executeQuery();
+            rs.next();
+            p=new porder(rs.getString("name"),rs.getInt("lcd"),rs.getInt("mouse"),rs.getInt("ram"));
+            p.setId(rs.getInt("id"));
+            //rs.get()會將從SQL抓取出來的資料內容轉成數值提供給java編譯器 藉此將物件的數值複寫成與SQL的數值一致
+            //待修改後 將修改完成的物件再次插入SQL資料庫內
+            //由於id的建立當初沒有寫在建構式內 需要額外再添加     
+            } 
+        catch (SQLException ex) 
+        {
+            Logger.getLogger(porderDao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return p;
+    }
+
+    public void login(String s1,String s2) {
+         
+        if(s1.equals("root")&& s2.equals("1234"))
+                  {
+                      ImpDao.getDB();
+                     porderUI pUI=new porderUI();
+                     loginUi p2=new loginUi();
+                     pUI.setVisible(true);
+                  }
+                  else
+                  {
+                     System.out.print("請重新輸入帳號密碼");
+                  }
+        
+       
+    }
+
+    @Override
+    public void outputExcel(String filePath,String tableName,String sql)  {
+
+                //String filePath="c:/abc/c.xls";
+                //String tableName="porder";
+                //String sql="select*from company.porder";
+                Connection conn=ImpDao.getDB();
+                PreparedStatement ps;
+                
+       try{
+                ps = conn.prepareStatement(sql);
+                ResultSet rs=ps.executeQuery();
+                ResultSetMetaData rsmd=rs.getMetaData();
+                //讀取查詢結果中的格式資料
+                int cloumCount=rsmd.getColumnCount();
+                //統計ResultSet中column的數量
+                
+                HSSFWorkbook hwb=new HSSFWorkbook();//建立excel工作簿
+                HSSFSheet sheet=hwb.createSheet(tableName);//建立sheet
+                HSSFRow row=sheet.createRow(0);//建立第0行 標題
+   
+                for(int i=0;i<cloumCount;i++)//將column的名稱帶入
+                {
+                    String labelName=rsmd.getColumnLabel(i+1);//取得column的名稱(id,name...etc)
+                    row.createCell(i).setCellValue(labelName);//將column欄位名稱填入
+                }
+                
+                int i=1;
+                HSSFRow tRow;//建立row=null
+                while(rs.next())
+                {
+                    tRow=sheet.createRow(i);//由sheet中產生row並重複直到rs.next抓不到為止
+                    
+                    for(int j=0;j<cloumCount;j++)
+                    { 
+                        HSSFCell tCell=tRow.createCell(j);//sheet產生cell格
+                        Object temp=rs.getObject(j+1);//將ResrltSet查詢結果循序轉出
+                            tCell.setCellValue(temp.toString());//將轉出的物件轉為String 放入cell中
+                            if(temp==null || "".equals(temp))//若資料為空白 則跳過
+                            {
+                                continue;
+                            }
+                    }
+                    i++;
+                }
+                    FileOutputStream fos = new FileOutputStream(filePath);
+                    hwb.write(fos);
+                    fos.close();
+                    System.out.print("export success"); 
+                   
+            }
+                catch (Exception e)
+                {
+                        e.printStackTrace();
+                }
+    }
+}
+        
+        
+
+
+
+
+    
+
+           
